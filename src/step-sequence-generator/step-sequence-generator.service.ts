@@ -7,7 +7,7 @@ stepGenerator.init();
 
 @Injectable()
 export class StepSequenceGeneratorService {
-  createSequence() {
-    return stepGenerator.generateSequence(DifficultLevelAmountStep.LEVEL_3);
+  createSequence(difficultLevel: DifficultLevelAmountStep = DifficultLevelAmountStep.LEVEL_3) {
+    return stepGenerator.generateSequence(difficultLevel);
   }
 }
