@@ -1,0 +1,75 @@
+name: Deploy server api
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - "main"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4  # Updated to v3
+
+      - name: Use Node.js 22
+        uses: actions/setup-node@v4  # Updated to v3
+        with:
+          node-version: 22
+          #registry-url: https://npm.pkg.github.com/
+
+      - name: Install packages
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Remove old folder
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.DESTINATION_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          script: "rm -rf /home/genry_bolit/sequence_generator/old"
+
+      - name: Copy files to serve
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.DESTINATION_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          rm: true
+          source: "ecosystem.config.js,package.json,srt/*,src/db/migrations/*,public/*,dist/*,views/*,node_modules/*"
+          target: "/home/${{ secrets.SSH_USERNAME }}/sequence_generator/next"
+
+
+      - name: Copy .env
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.DESTINATION_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          script: "cp /home/genry_bolit/sequence_generator/.env /home/genry_bolit/sequence_generator/next/.env"
+
+      - name: Move folders
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.DESTINATION_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          script: "mv /home/genry_bolit/sequence_generator/current /home/genry_bolit/sequence_generator/old && mv /home/genry_bolit/sequence_generator/next /home/genry_bolit/sequence_generator/current"
+
+      - name: Restart server
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.DESTINATION_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          script: "/home/genry_bolit/sequence_generator/restart.sh"
+
