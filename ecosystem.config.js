@@ -1,7 +1,7 @@
 module.exports = {
   apps: [
     {
-      name: 'sequence-generator',
+      name: 'sg-api',
       script: './dist/main.js',
       instance: '1',
       autorestart: true,
