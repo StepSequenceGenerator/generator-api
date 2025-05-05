@@ -1,7 +1,7 @@
 import { Controller, Get } from '@nestjs/common';
 import { StepSequenceGeneratorService } from './step-sequence-generator.service';
 
-@Controller('step-sequence-generator')
+@Controller('sg-step')
 export class StepSequenceGeneratorController {
   constructor(private readonly stepSequenceGeneratorService: StepSequenceGeneratorService) {}
 
