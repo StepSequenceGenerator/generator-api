@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { StepSequenceGeneratorModule } from './step-sequence-generator/step-sequence-generator.module';
+import { StepSequenceGeneratorModule } from './generator-modules/step-sequence-generator/step-sequence-generator.module';
 
 @Module({
   imports: [StepSequenceGeneratorModule],
