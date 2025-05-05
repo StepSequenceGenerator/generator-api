@@ -32,7 +32,7 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.SSH_PORT }}
-          script: "rm -rf /home/genry_bolit/sequence_generator/old"
+          script: "rm -rf /home/genry_bolit/sg-api/old"
 
       - name: Copy files to serve
         uses: appleboy/scp-action@v0.1.7
@@ -43,7 +43,7 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           rm: true
           source: "ecosystem.config.js,package.json,srt/*,src/db/migrations/*,public/*,dist/*,views/*,node_modules/*"
-          target: "/home/${{ secrets.SSH_USERNAME }}/sequence_generator/next"
+          target: "/home/${{ secrets.SSH_USERNAME }}/sg-api/next"
 
 
       - name: Copy .env
@@ -53,7 +53,7 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.SSH_PORT }}
-          script: "cp /home/genry_bolit/sequence_generator/.env /home/genry_bolit/sequence_generator/next/.env"
+          script: "cp /home/genry_bolit/sg-api/.env /home/genry_bolit/sg-api/next/.env"
 
       - name: Move folders
         uses: appleboy/ssh-action@v1.0.3
@@ -62,7 +62,7 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.SSH_PORT }}
-          script: "mv /home/genry_bolit/sequence_generator/current /home/genry_bolit/sequence_generator/old && mv /home/genry_bolit/sequence_generator/next /home/genry_bolit/sequence_generator/current"
+          script: "mv /home/genry_bolit/sg-api/current /home/genry_bolit/sg-api/old && mv /home/genry_bolit/sg-api/next /home/genry_bolit/sg-api/current"
 
       - name: Restart server
         uses: appleboy/ssh-action@v1.0.3
@@ -71,5 +71,5 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.SSH_PORT }}
-          script: "/home/genry_bolit/sequence_generator/restart.sh"
+          script: "/home/genry_bolit/sg-api/restart.sh"
 
