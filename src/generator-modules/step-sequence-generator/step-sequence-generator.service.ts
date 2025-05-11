@@ -1,19 +1,26 @@
 import { Injectable } from '@nestjs/common';
 
-import twizzle, { DifficultLevelAmountStep } from 'step-sequence-generator';
+import twizzle, {
+  DistanceFactorType,
+  DifficultLevelAmountStep,
+  utils,
+} from 'step-sequence-generator';
 
+const { createDistanceFactor } = utils;
 const stepGenerator = twizzle();
 stepGenerator.init();
 
 @Injectable()
 export class StepSequenceGeneratorService {
-  createSequence(difficultLevel: DifficultLevelAmountStep) {
-    return stepGenerator.generateSequence(difficultLevel);
+  createSequence(difficultLevel: DifficultLevelAmountStep, distanceFactor: DistanceFactorType) {
+    return stepGenerator.generateSequence(difficultLevel, distanceFactor);
   }
 
-  mapSequenceLevelToDifficultLevelAmountStep(
-    sequenceLevel: number | undefined,
-  ): DifficultLevelAmountStep {
+  convertToDistanceFactor(value: 1 | 2 | 3 | 4 | 5) {
+    return createDistanceFactor(value);
+  }
+
+  mapSequenceLevelToDifficultLevelAmountStep(sequenceLevel: number): DifficultLevelAmountStep {
     switch (sequenceLevel) {
       case 1:
         return DifficultLevelAmountStep.LEVEL_1;
